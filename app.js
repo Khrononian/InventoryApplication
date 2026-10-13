@@ -5,6 +5,7 @@ const app = express();
 const path = require('node:path');
 const { inventoryRouter } = require('./routes/inventoryRouter');
 const { error } = require('node:console');
+const db = require("./db/queries");
 
 app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
@@ -12,8 +13,14 @@ app.set('views', path.join(__dirname, 'views'));
 
 app.use('/', inventoryRouter);
 
-app.listen(port, () => {
-    if (error) console.error(error);
+const startServer = async () => {
+    app.locals.categories = await db.getAllCategories();
 
-    console.log(`Server is running on port ${port}`);
-})
+    app.listen(port, () => {
+        if (error) console.error(error);
+
+        console.log(`Server is running on port ${port}`);
+    })
+}
+
+startServer();
