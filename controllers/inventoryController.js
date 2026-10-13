@@ -1,7 +1,4 @@
 const db = require("../db/queries");
-// const app = require("../app");
-
-// app.locals.categories = db.getAllCategories();
 
 exports.getAllGames = async (req, res) => {
     const getGames = await db.getAllGames();
@@ -13,13 +10,9 @@ exports.getAllGames = async (req, res) => {
         const specificGame = await fetch(`https://store.steampowered.com/api/appdetails?appids=${filteredGames[i].appid}`);
         const specificGameJson = await specificGame.json();
         
-        // specificGameData[filteredGames[i].appid] = specificGameJson;
-
-        // filteredGames[i].details = specificGameData[filteredGames[i].appid].data;
         specificGameData.push(specificGameJson);
     }
     
-    // getGames.gameJson.filter(game => game.name.match(/[A-Z][a-z].*$/i) == dbGames.title);
 
     res.render('index', { title: 'Games Inventory', games: getGames, dbGames, filteredGames, specificGameData });
 }
@@ -28,4 +21,10 @@ exports.getAllCategories = async (req, res) => {
     const getCategories = await db.getAllCategories();
 
 
+}
+
+exports.getCreateGameForm = (req, res) => {
+
+
+    res.render('createGame', { title: 'Create Game' });
 }
