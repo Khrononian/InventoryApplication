@@ -6,7 +6,7 @@ exports.getAllGames = async () => {
     const gamesList = await gamesData.json();
     const gamesJson = gamesList.response.apps;
 
-    return {rows, gamesJson};
+    return { rows, gamesJson };
 }
 
 exports.getAllCategories = async () => {
@@ -14,3 +14,4 @@ exports.getAllCategories = async () => {
 
     return rows;
 }
+
