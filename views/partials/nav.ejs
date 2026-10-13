@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <nav>
+        <div>
+            <button class="nav-button" id="home-button">Home</button>
+
+            <% categories.forEach(category => { %>
+                <button class="nav-button" id="<%= category.name.toLowerCase() %>-button"><%= category.name %></button>
+            <% }) %>
+
+            <a href="/create">Create Game</a>
+        </div>
+    </nav>
+</body>
+</html>
