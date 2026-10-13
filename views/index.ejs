@@ -10,9 +10,7 @@
         <header>
             <h1><%= title %></h1>
         </header>
-        <nav>
-            
-        </nav>
+        <%- include('partials/nav') %>
         <section>
             <ul>
                 <% console.log(filteredGames, specificGameData, specificGameData[0], specificGameData[0][filteredGames[0].appid].data.header_image, 'BEGIN', Object.values(specificGameData[0])[0], 'BETWEEN', Object.values(specificGameData[0])[0].data.header_image, Object.values(specificGameData[0])[0].success ); %>
@@ -21,13 +19,21 @@
                     
                     <div>
                         <li><% for (let i = 0; i < dbGames.length; i++) { %>
-                        <% if (Object.values(specificGameData[i])[0].success && Object.values(specificGameData[i])[0].data.name == game.title ) { %>
-                            <img src="<%= Object.values(specificGameData[i])[0].data.header_image %>" alt="<%= Object.values(specificGameData[i])[0].name %>">
-                        <% } else if (Object.values(specificGameData[i])[0].success == false && Object.values(specificGameData[i])[0].name == game.title ) { %>
-                            <p>Image not available</p>
-                        <% } %>
+                            <% 
+                            const gameWrapper = specificGameData && specificGameData[i];
+                            const gameData = gameWrapper ? Object.values(gameWrapper)[0] : null;
+                            %>
+                            <% if (gameData) { %>
+                            <% if (gameData.success && gameData.data && gameData.data.name == game.title) { %>
+                                <img src="<%= gameData.data.header_image %>" alt="<%= gameData.name %>">
+                            <% } else if (gameData.success === false && gameData.name == game.title) { %>
+                                <p>Image not available</p>
+                            <% } %>
+                            <% } %>
+                        
                         <% } %></li>
                         <li><%= game.title %> - <%= game.genre %></li>
+                        <a href='/details'>Details</a>
                     </div>
                 <% }) %>
             </ul>
