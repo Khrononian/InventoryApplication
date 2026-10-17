@@ -7,12 +7,12 @@
 <body>
     <nav>
         <div>
-            <button class="nav-button" id="home-button">Home</button>
-
+            <a href="/">Home</a>
+            <% if (categories && categories.length > 0) { %>
             <% categories.forEach(category => { %>
                 <button class="nav-button" id="<%= category.name.toLowerCase() %>-button"><%= category.name %></button>
             <% }) %>
-
+            <% } %>
             <a href="/create">Create Game</a>
         </div>
     </nav>
