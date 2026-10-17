@@ -15,3 +15,11 @@ exports.getAllCategories = async () => {
     return rows;
 }
 
+exports.insertGame = async (gameData) => {
+    const { title, genre, developer, release_date, description } = gameData;
+    
+    await pool.query(
+        'INSERT INTO games (title, genre, developer, release_date, description) VALUES ($1, $2, $3, $4, $5)',
+        [title, genre, developer, release_date, description]
+    );
+}
