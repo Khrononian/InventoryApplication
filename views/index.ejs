@@ -13,7 +13,6 @@
         <%- include('partials/nav') %>
         <section>
             <ul>
-                <% console.log(filteredGames, specificGameData, specificGameData[0], specificGameData[0][filteredGames[0].appid].data.header_image, 'BEGIN', Object.values(specificGameData[0])[0], 'BETWEEN', Object.values(specificGameData[0])[0].data.header_image, Object.values(specificGameData[0])[0].success ); %>
                 <% dbGames.forEach(game => { %>
                     
                     
@@ -33,7 +32,10 @@
                         
                         <% } %></li>
                         <li><%= game.title %> - <%= game.genre %></li>
-                        <a href='/details'>Details</a>
+                        <a href="/details/<%= game.title %>">Details</a>
+                        <form action='/delete' method="post">
+                            <button type='submit' name='delete' value='<%= game.title %>'>Delete</button>
+                        </form>
                     </div>
                 <% }) %>
             </ul>
