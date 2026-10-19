@@ -23,3 +23,23 @@ exports.insertGame = async (gameData) => {
         [title, genre, developer, release_date, description]
     );
 }
+
+exports.findGameByTitle = async (title) => {
+    const { rows } = await pool.query('SELECT * FROM games WHERE title = $1', [title]);
+    return rows[0];
+}
+
+exports.getGamesByCategory = async () => {
+    const { rows } = await pool.query(`
+        SELECT games.*, categories.name AS category_name
+        FROM games
+        JOIN categories ON games.category_id = categories.id
+        WHERE categories.name = $1`
+    )
+
+    return rows
+}
+
+exports.deleteGame = async (gameName) => {
+    await pool.query('DELETE FROM games WHERE title = $1', [gameName]);
+}
