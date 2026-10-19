@@ -2,6 +2,8 @@ const db = require("../db/queries");
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+
+
 exports.getAllGames = async (req, res) => {
     const getGames = await db.getAllGames();
     const dbGames = getGames.rows.filter(game => game.title.match(/[A-Z][a-z].*$/i));
@@ -24,19 +26,32 @@ exports.getAllGames = async (req, res) => {
         
         
     }
-    
-    // for (const game of filteredGames) {
-    //     const specificGame = await fetch(`https://store.steampowered.com/api/appdetails?appids=${game.appid}`);
-    //     const specificGameJson = await specificGame.json();
-
-    //     specificGameData.push(specificGameJson);
-    // }
 
     res.render('index', { title: 'Games Inventory', games: getGames, dbGames, filteredGames, specificGameData });
 }
 
 exports.getCreateGameForm = (req, res) => {
     res.render('createGame', { title: 'Create Game' });
+}
+
+exports.getGameDetails = async (req, res) => {
+    const gameTitle = req.params.game;
+    const getGames = await db.getAllGames();
+    const gameDetails = await db.findGameByTitle(gameTitle);
+    const filteredGame = getGames.gamesJson.find(game => game.name === gameTitle);
+    const specificGame = await fetch(`https://store.steampowered.com/api/appdetails?appids=${filteredGame.appid}`);
+    const specificGameJson = await specificGame.json();
+
+
+    res.render('gameDetails', { gameTitle, gameDetails, imageUrl: specificGameJson[filteredGame.appid].data.header_image });
+}
+
+exports.getAllGamesByCategory = async (req, res) => {
+    const categoryName = req.params.category;
+    
+    
+
+    res.render('categoryDetails', { categoryName })
 }
 
 exports.postCreateGameForm = async (req, res) => {
@@ -47,8 +62,3 @@ exports.postCreateGameForm = async (req, res) => {
     res.redirect('/');
 }
 
-exports.getGameDetails = (req, res) => {
-    const gameTitle = req.params.game;
-
-    res.render('gameDetails', { title: 'Game Details', gameTitle });
-}
