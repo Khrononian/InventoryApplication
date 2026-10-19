@@ -6,7 +6,24 @@
     <title><%= gameTitle %></title>
 </head>
 <body>
-    <h1><%= gameTitle %></h1>
-    <!-- Add more game details here -->
+    <main>
+        <%- include('partials/nav') %>
+        <h1><%= gameTitle %></h1>
+        <div>
+            <ul>
+                <% console.log('gameDetails:', gameDetails); %>
+                <% if (gameDetails) { %>
+                    <li><img src="<%= imageUrl %>" alt="<%= gameDetails.title %>"></li>
+                    <li>Genre: <%= gameDetails.genre %></li>
+                    <li>Developer: <%= gameDetails.developer %></li>
+                    <li>Release Date: <%= gameDetails.release_date.toDateString() %></li>
+                    <li>Description: <%= gameDetails.description %></li>
+                <% } else { %>
+                    <p>Game not found.</p>
+                <% } %>
+            </ul>
+        </div>
+    </main>
+    
 </body>
 </html>
