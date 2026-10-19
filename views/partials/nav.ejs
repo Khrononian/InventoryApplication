@@ -10,7 +10,7 @@
             <a href="/">Home</a>
             <% if (categories && categories.length > 0) { %>
             <% categories.forEach(category => { %>
-                <button class="nav-button" id="<%= category.name.toLowerCase() %>-button"><%= category.name %></button>
+                <button><a href="/category/<%= category.name.toLowerCase() %>"><%= category.name %></a></button>
             <% }) %>
             <% } %>
             <a href="/create">Create Game</a>
