@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS games (
     genre VARCHAR(255),
     developer VARCHAR(255),
     release_date DATE,
-    description VARCHAR(255)
+    description VARCHAR(255),
+    game_img JSONB
 );
 
 CREATE TABLE IF NOT EXISTS categories (
