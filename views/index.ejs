@@ -14,20 +14,10 @@
         <section>
             <ul>
                 <% dbGames.forEach(game => { %>
-                    
-                    
                     <div>
                         <li><% for (let i = 0; i < dbGames.length; i++) { %>
-                            <% 
-                            const gameWrapper = specificGameData && specificGameData[i];
-                            const gameData = gameWrapper ? Object.values(gameWrapper)[0] : null;
-                            %>
-                            <% if (gameData) { %>
-                            <% if (gameData.success && gameData.data && gameData.data.name == game.title) { %>
-                                <img src="<%= gameData.data.header_image %>" alt="<%= gameData.name %>">
-                            <% } else if (gameData.success === false && gameData.name == game.title) { %>
-                                <p>Image not available</p>
-                            <% } %>
+                            <% if ( dbGames[i].title == game.title) { %>
+                                <img src="<%= game.game_img.url %>" alt="<%= game.title %>">
                             <% } %>
                         
                         <% } %></li>
