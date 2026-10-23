@@ -8,8 +8,11 @@
 <body>
     <main>
         <%- include('partials/nav') %>
-        <h1>Games in <%= categoryName %> Category</h1>
+        <h1>Games in <%= categoryName.charAt(0).toUpperCase() + categoryName.slice(1) %> category</h1>
 
+        <div>
+            <% console.log('CATEGORIZED', categorizedGames) %>
+        </div>
         
     </main>
 </body>
