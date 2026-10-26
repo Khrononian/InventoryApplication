@@ -19,19 +19,14 @@ exports.getAllGames = async (req, res) => {
             })
             await db.updateGameImage(gameObjectData)
             
-            console.log('CONTROLLER', specificGameJson, specificGameJson[filteredGames[i].appid].data.name)
-
+            // console.log('OBJ', gameObjectData)
             await sleep(300);
         } catch (error) {
-            console.error(`Error fetching specific game data for appid ${filteredGames[i].appid}:`, error.message);
+            console.error(`Error fetching specific game data for appid ${filteredGames[i].appid}, which is ${filteredGames[i]}:`, error.message);
         }
     }
 
     res.render('index', { title: 'Games Inventory', dbGames });
-}
-
-exports.getCreateGameForm = (req, res) => {
-    res.render('createGame', { title: 'Create Game' });
 }
 
 exports.getGameDetails = async (req, res) => {
@@ -50,14 +45,67 @@ exports.getAllGamesByCategory = async (req, res) => {
     const categoryName = req.params.category;
     const categorizedGames = await db.getGamesByCategory(categoryName)
 
-    res.render('categoryDetails', { categoryName, categorizedGames })
+    res.render('categoryDetails', { title: 'Categorized Games', categoryName, categorizedGames })
+}
+
+exports.getCreateGameForm = (req, res) => {
+    res.render('createGame', { title: 'Create Game based on Steam!' });
 }
 
 exports.postCreateGameForm = async (req, res) => {
     const { title, genre, developer, releaseDate, description } = req.body;
+    const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
+    const searchUrlJson = await storeSearchUrl.json()
+    const escapedQuery = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+    const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]+'); 
+    const gameRegex = new RegExp(`^${pattern}$`, 'i');
+    let match = searchUrlJson.items.find(item => gameRegex.test(item.name))
 
-    await db.insertGame({ title, genre, developer, releaseDate, description });
+    if (!searchUrlJson.items || searchUrlJson.total === 0) {
+        // console.log('DID THIS COMMAND', storeSearchUrl, searchUrlJson)
+        return res.render('createGame', {
+            error: `${title} was not found on Steam. Check your spelling!`
+        })
+    }
+
+    
+
+    await db.insertGame({ match, genre, developer, releaseDate, description })
+
+    console.log('DID NOT FIND', searchUrlJson, 'MATCHED HERE', match)
+    // if (!match) {
+        
+    //     match = searchUrlJson.items[0]
+
+    //     await db.insertGame({ match, genre, developer, releaseDate, description });
+    // } else {
+    //     await db.insertGame({ title, genre, developer, releaseDate, description });
+    // }
+
+    
 
     res.redirect('/');
 }
 
+exports.getUpdateGameForm = async (req, res) => {
+    const gameTitle = req.params.gameTitle
+
+    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle })
+}
+
+exports.postUpdateGameForm = async (req, res) => {
+    const { title, genre, developer, releaseDate, description } = req.body;
+    const gameTitle = req.params.gameTitle
+
+    await db.updateGame({ title, genre, developer, releaseDate, description }, gameTitle)
+
+    res.redirect('/')
+}
+
+exports.postDeletedGame = async (req, res) => {
+    const deletedGame = req.body.delete;
+
+    await db.deleteGame(deletedGame)
+
+    res.redirect('/')
+}
