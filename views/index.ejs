@@ -16,8 +16,8 @@
                 <% dbGames.forEach(game => { %>
                     <div>
                         <li><% for (let i = 0; i < dbGames.length; i++) { %>
-                            <% if ( dbGames[i].title == game.title) { %>
-                                <img src="<%= game.game_img.url %>" alt="<%= game.title %>">
+                            <% if (dbGames[i].title == game.title) { %>
+                                <img src="<%= game.game_img ? game.game_img.url : '' %>" alt="<%= game.title %>">
                             <% } %>
                         
                         <% } %></li>
