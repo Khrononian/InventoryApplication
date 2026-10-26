@@ -31,8 +31,6 @@ exports.findGameByTitle = async (title) => {
     return rows[0];
 }
 
-
-
 exports.updateGameImage = async (array) => {
     for (const game of array) {
 
@@ -53,15 +51,26 @@ exports.updateGameImage = async (array) => {
     }
 }
 
+exports.updateGame = async (gameData, gameTitle) => {
+    const { title, genre, developer, release_date, description } = gameData;
+
+    await pool.query(
+        `UPDATES games 
+        SET title = $1, genre = $2, developer = $3, release_date = $4, description = $5
+        WHERE name = $6`,
+        [title, genre, developer, release_date, description, gameTitle]
+    );
+}
+
 exports.getGamesByCategory = async (categoryName) => {
     const { rows } = await pool.query(`
         SELECT games.*, categories.name AS category_name
         FROM games
-        JOIN categories ON games.genre = categories.name
+        JOIN categories ON games.genre LIKE '%' || categories.name || '%'
         WHERE LOWER(categories.name) = LOWER($1)`, [categoryName]
     );
 
-    return rows[0]
+    return rows
 }
 
 exports.deleteGame = async (gameName) => {
