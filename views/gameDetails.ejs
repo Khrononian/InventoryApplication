@@ -3,12 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= gameTitle %></title>
+    <title>Games Inventory</title>
 </head>
 <body>
     <main>
-        <%- include('partials/nav') %>
+        <nav>
+            <%- include('partials/nav') %>
+        </nav>
         <h1><%= gameTitle %></h1>
+        <button><a href="/update:gameTitle">Update</a></button>
         <div>
             <ul>
                 <% console.log('gameDetails:', gameDetails); %>
@@ -17,7 +20,7 @@
                     <li>Genre: <%= gameDetails.genre %></li>
                     <li>Developer: <%= gameDetails.developer %></li>
                     <li>Release Date: <%= gameDetails.release_date.toDateString() %></li>
-                    <li>Description: <%= gameDetails.description %></li>
+                    <li>Description<br> <%= gameDetails.description %></li>
                 <% } else { %>
                     <p>Game not found.</p>
                 <% } %>
