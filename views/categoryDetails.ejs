@@ -3,15 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Games Inventory</title>
 </head>
 <body>
     <main>
-        <%- include('partials/nav') %>
+        <nav>
+            <%- include('partials/nav') %>
+        </nav>
         <h1>Games in <%= categoryName.charAt(0).toUpperCase() + categoryName.slice(1) %> category</h1>
 
         <div>
             <% console.log('CATEGORIZED', categorizedGames) %>
+            <% categorizedGames.forEach(game => { %>
+                <h2><%= game.title %></h2>
+                <img src="<%= game.game_img.url %>" alt="<%= game.title %>"
+                <p>Developer <br> <%= game.developer %></p>
+                <p><%= game.release_date.toDateString() %></p>
+                <p>Description <br> <%= game.description %></p>
+            <% }) %>
         </div>
         
     </main>
