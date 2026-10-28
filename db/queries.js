@@ -16,13 +16,27 @@ exports.getAllCategories = async () => {
 }
 
 exports.insertGame = async (gameData) => {
-    const { title, genre, developer, release_date, description } = gameData;
+    // const { title, genre, developer, release_date, description } = gameData;
     
-    await pool.query(
-        `INSERT INTO games (title, genre, developer, release_date, description) 
-        VALUES ($1, $2, $3, $4, $5)`,
-        [title, genre, developer, release_date, description]
-    );
+    // await pool.query(
+    //     `INSERT INTO games (title, genre, developer, release_date, description) 
+    //     VALUES ($1, $2, $3, $4, $5);`,
+    //     [title, genre, developer, release_date, description]
+    // );
+
+    try {
+        const { gameName, genre, developer, newReleaseDate, description } = gameData;
+
+        await pool.query(
+            `INSERT INTO games (title, genre, developer, release_date, description) 
+            VALUES ($1, $2, $3, $4, $5);`,
+            [gameName, genre, developer, newReleaseDate, description]
+        );
+
+        console.log('SUCCESS', gameName, 'GENRE', genre, developer, newReleaseDate, description)
+    } catch (error) {
+        console.error('FAILED', error.message)
+    }
 }
 
 exports.findGameByTitle = async (title) => {
