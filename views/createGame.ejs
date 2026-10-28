@@ -16,9 +16,6 @@
         <form action='/create' method='POST'>
             <label for='title'>Title:</label>
             <input type='text' name='title' id='title' required>
-            <label for='description'>Description:</label>
-            
-
             <label for='genre'>Genre:</label>
             <select name='genre' id='genre' required>
                 <option value='Action'>Action</option>
@@ -33,9 +30,9 @@
             <label for='developer'>Developer:</label>
             <input type='text' name='developer' id='developer' required>
             <label for='release-date'>Release Date:</label>
-            <input type='date' name='release-date' id='release-date' required>
+            <input type='date' name='release_date' id='release_date' required>
 
-            <label for='description'></label>
+            <label for='description'>Description:</label>
             <textarea name='description' id='description' required></textarea>
 
             <button type='submit'>Create Game</button>
