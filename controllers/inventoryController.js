@@ -53,13 +53,18 @@ exports.getCreateGameForm = (req, res) => {
 }
 
 exports.postCreateGameForm = async (req, res) => {
-    const { title, genre, developer, releaseDate, description } = req.body;
+    const { title, genre, developer, release_date, description } = req.body;
     const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
     const searchUrlJson = await storeSearchUrl.json()
     const escapedQuery = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-    const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]+'); 
-    const gameRegex = new RegExp(`^${pattern}$`, 'i');
-    let match = searchUrlJson.items.find(item => gameRegex.test(item.name))
+    const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]*'); 
+    const gameRegex = new RegExp(`^${pattern}s$`, 'i');
+    const match = searchUrlJson.items.find(item => gameRegex.test(item.name));
+    const gameDetail = await fetch(`https://store.steampowered.com/api/appdetails?appids=${match.id}`);
+    const gameDetailJson = await gameDetail.json()
+    const gameName = match.name;
+    // const newReleaseDate = releaseDate.toDateString()
+    const gameData = []
 
     if (!searchUrlJson.items || searchUrlJson.total === 0) {
         // console.log('DID THIS COMMAND', storeSearchUrl, searchUrlJson)
@@ -68,11 +73,15 @@ exports.postCreateGameForm = async (req, res) => {
         })
     }
 
-    
+    gameData.push({
+        name: match.name,
+        url: gameDetailJson[match.id].data.header_image
+    })
 
-    await db.insertGame({ match, genre, developer, releaseDate, description })
+    await db.insertGame({ gameName, genre, developer, release_date, description })
+    await db.updateGameImage(gameData)
 
-    console.log('DID NOT FIND', searchUrlJson, 'MATCHED HERE', match)
+    console.log('DID NOT FIND', searchUrlJson, 'MATCHED HERE', release_date, match.id, match, gameName, 'JSON', gameDetailJson)
     // if (!match) {
         
     //     match = searchUrlJson.items[0]
