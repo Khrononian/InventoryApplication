@@ -11,10 +11,9 @@
             <%- include('partials/nav') %>
         </nav>
         <h1><%= gameTitle %></h1>
-        <button><a href="/update:gameTitle">Update</a></button>
+        <button><a href="/update/<%= gameTitle %>">Update</a></button>
         <div>
             <ul>
-                <% console.log('gameDetails:', gameDetails); %>
                 <% if (gameDetails) { %>
                     <li><img src="<%= imageUrl %>" alt="<%= gameDetails.title %>"></li>
                     <li>Genre: <%= gameDetails.genre %></li>
