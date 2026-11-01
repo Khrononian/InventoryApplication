@@ -58,12 +58,11 @@ exports.postCreateGameForm = async (req, res) => {
     const searchUrlJson = await storeSearchUrl.json()
     const escapedQuery = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
     const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]*'); 
-    const gameRegex = new RegExp(`^${pattern}s$`, 'i');
+    const gameRegex = new RegExp(`^${pattern}s?$`, 'i');
     const match = searchUrlJson.items.find(item => gameRegex.test(item.name));
     const gameDetail = await fetch(`https://store.steampowered.com/api/appdetails?appids=${match.id}`);
     const gameDetailJson = await gameDetail.json()
     const gameName = match.name;
-    // const newReleaseDate = releaseDate.toDateString()
     const gameData = []
 
     if (!searchUrlJson.items || searchUrlJson.total === 0) {
@@ -82,31 +81,31 @@ exports.postCreateGameForm = async (req, res) => {
     await db.updateGameImage(gameData)
 
     console.log('DID NOT FIND', searchUrlJson, 'MATCHED HERE', release_date, match.id, match, gameName, 'JSON', gameDetailJson)
-    // if (!match) {
-        
-    //     match = searchUrlJson.items[0]
-
-    //     await db.insertGame({ match, genre, developer, releaseDate, description });
-    // } else {
-    //     await db.insertGame({ title, genre, developer, releaseDate, description });
-    // }
-
-    
 
     res.redirect('/');
 }
 
 exports.getUpdateGameForm = async (req, res) => {
     const gameTitle = req.params.gameTitle
+    const gameData = await db.getGameValues(gameTitle)
+    const categories = await db.getAllCategories()
+    let formattedDate = ''
 
-    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle })
+    if (gameData.rows[0].release_date) {
+        const d = new Date(gameData.rows[0].release_date)
+
+        formattedDate = d.toISOString().split('T')[0]
+    }
+
+    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle, gameData, categories, formattedDate })
 }
 
 exports.postUpdateGameForm = async (req, res) => {
-    const { title, genre, developer, releaseDate, description } = req.body;
+    const { title, genre, developer, release_date, description } = req.body;
     const gameTitle = req.params.gameTitle
 
-    await db.updateGame({ title, genre, developer, releaseDate, description }, gameTitle)
+    await db.getGameValues(gameTitle)
+    await db.updateGameValues({ title, genre, developer, release_date, description })
 
     res.redirect('/')
 }
