@@ -16,24 +16,16 @@ exports.getAllCategories = async () => {
 }
 
 exports.insertGame = async (gameData) => {
-    // const { title, genre, developer, release_date, description } = gameData;
-    
-    // await pool.query(
-    //     `INSERT INTO games (title, genre, developer, release_date, description) 
-    //     VALUES ($1, $2, $3, $4, $5);`,
-    //     [title, genre, developer, release_date, description]
-    // );
-
     try {
-        const { gameName, genre, developer, newReleaseDate, description } = gameData;
+        const { gameName, genre, developer, release_date, description } = gameData;
 
         await pool.query(
             `INSERT INTO games (title, genre, developer, release_date, description) 
             VALUES ($1, $2, $3, $4, $5);`,
-            [gameName, genre, developer, newReleaseDate, description]
+            [gameName, genre, developer, release_date, description]
         );
 
-        console.log('SUCCESS', gameName, 'GENRE', genre, developer, newReleaseDate, description)
+        console.log('SUCCESS', gameName, 'GENRE', genre, developer, release_date, description)
     } catch (error) {
         console.error('FAILED', error.message)
     }
@@ -65,13 +57,24 @@ exports.updateGameImage = async (array) => {
     }
 }
 
-exports.updateGame = async (gameData, gameTitle) => {
+exports.getGameValues = async (gameTitle, gameData) => {
+    const rows = await pool.query(`
+        SELECT * FROM games
+        WHERE title = $1
+        `, [gameTitle])
+
+    return rows
+
+    
+}
+
+exports.updateGameValues = async (gameData) => {
     const { title, genre, developer, release_date, description } = gameData;
 
     await pool.query(
         `UPDATES games 
         SET title = $1, genre = $2, developer = $3, release_date = $4, description = $5
-        WHERE name = $6`,
+        WHERE title = $6`,
         [title, genre, developer, release_date, description, gameTitle]
     );
 }
