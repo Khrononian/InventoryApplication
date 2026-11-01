@@ -7,8 +7,8 @@ inventoryRouter.get('/details/:game', inventoryController.getGameDetails);
 inventoryRouter.get('/category/:category', inventoryController.getAllGamesByCategory);
 inventoryRouter.get('/create', inventoryController.getCreateGameForm);
 inventoryRouter.post('/create', inventoryController.postCreateGameForm);
-inventoryRouter.get('/update:gameTitle', inventoryController.getUpdateGameForm);
-inventoryRouter.post('/update:gameTitle', inventoryController.postUpdateGameForm);
+inventoryRouter.get('/update/:gameTitle', inventoryController.getUpdateGameForm);
+inventoryRouter.post('/update/:gameTitle', inventoryController.postUpdateGameForm);
 inventoryRouter.post('/delete', inventoryController.postDeletedGame)
 
 
