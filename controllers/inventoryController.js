@@ -2,6 +2,34 @@ const db = require("../db/queries");
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const searchFetchedGame = async (title) => {
+    const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
+    const searchUrlJson = await storeSearchUrl.json()
+    const escapedQuery = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+    const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]*'); 
+    const gameRegex = new RegExp(`^${pattern}s?$`, 'i');
+    const match = searchUrlJson.items.find(item => gameRegex.test(item.name));
+    const gameDetail = await fetch(`https://store.steampowered.com/api/appdetails?appids=${match.id}`);
+    const gameDetailJson = await gameDetail.json();
+    const gameName = match.name;
+    const gameImage = []
+
+    if (!searchUrlJson.items || searchUrlJson.total === 0) {
+        // console.log('DID THIS COMMAND', storeSearchUrl, searchUrlJson)
+        return res.render('createGame', {
+            error: `${title} was not found on Steam. Check your spelling!`
+        })
+    }
+
+    gameImage.push({
+        name: match.name,
+        url: gameDetailJson[match.id].data.header_image
+    })
+
+
+    return { gameName, gameImage }
+}
+
 exports.getAllGames = async (req, res) => {
     const getGames = await db.getAllGames();
     const dbGames = getGames.rows.filter(game => game.title?.match(/[A-Z][a-z].*$/i));
@@ -49,38 +77,32 @@ exports.getAllGamesByCategory = async (req, res) => {
 }
 
 exports.getCreateGameForm = (req, res) => {
-    res.render('createGame', { title: 'Create Game based on Steam!' });
+    res.render('createGame', { title: 'Create Game based on Steam!', formData: undefined });
 }
 
 exports.postCreateGameForm = async (req, res) => {
     const { title, genre, developer, release_date, description } = req.body;
-    const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
-    const searchUrlJson = await storeSearchUrl.json()
-    const escapedQuery = title.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-    const pattern = escapedQuery.replace(/\s+/g, '[\\s\\-_]*'); 
-    const gameRegex = new RegExp(`^${pattern}s?$`, 'i');
-    const match = searchUrlJson.items.find(item => gameRegex.test(item.name));
-    const gameDetail = await fetch(`https://store.steampowered.com/api/appdetails?appids=${match.id}`);
-    const gameDetailJson = await gameDetail.json()
-    const gameName = match.name;
-    const gameData = []
+    const { gameName, gameImage } = await searchFetchedGame(title)
 
-    if (!searchUrlJson.items || searchUrlJson.total === 0) {
-        // console.log('DID THIS COMMAND', storeSearchUrl, searchUrlJson)
+    console.log('SEARCHING FOR GAME', gameName, await db.findGameByTitle(gameName), req.body, req.body.title)
+    if (await db.findGameByTitle(gameName)) {
+        console.log('FAILED', gameName)
         return res.render('createGame', {
-            error: `${title} was not found on Steam. Check your spelling!`
+            error: `${gameName} already exists in the database, cannot create a duplicate entry.`,
+            formData: req.body
         })
     }
 
-    gameData.push({
-        name: match.name,
-        url: gameDetailJson[match.id].data.header_image
-    })
+    if (gameName == undefined) {
+        return res.render('createGame', {
+            error: `Game does not exist in steam api, try another game!`,
+            formData: req.body
+        })
+    }
 
     await db.insertGame({ gameName, genre, developer, release_date, description })
-    await db.updateGameImage(gameData)
+    await db.updateGameImage(gameImage)
 
-    console.log('DID NOT FIND', searchUrlJson, 'MATCHED HERE', release_date, match.id, match, gameName, 'JSON', gameDetailJson)
 
     res.redirect('/');
 }
@@ -97,15 +119,42 @@ exports.getUpdateGameForm = async (req, res) => {
         formattedDate = d.toISOString().split('T')[0]
     }
 
-    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle, gameData, categories, formattedDate })
+    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle, gameData, categories, formattedDate,  })
 }
 
 exports.postUpdateGameForm = async (req, res) => {
     const { title, genre, developer, release_date, description } = req.body;
     const gameTitle = req.params.gameTitle
+    const gameData = await db.getGameValues(gameTitle)
+    const { gameName, gameImage } = await searchFetchedGame(title)
+    const categories = await db.getAllCategories();
+    let formattedDate = ''
+
+    console.log('UPDATING GAME', gameData, gameName, await db.updateGameImage(gameImage))
+
+    if (title == gameTitle) {
+        // const gameData = await db.getGameValues(gameTitle)
+        console.log('FAILED', gameTitle, gameData)
+        return res.render('updateGame', {
+            error: `${gameTitle} already exists, change the name!`,
+            title: 'Update Game based on Steam!',
+            gameTitle,
+            gameData,
+            categories,
+            formattedDate: new Date(gameData.rows[0].release_date).toISOString().split('T')[0],
+            formData: req.body
+        })
+    }
+
+    if (gameData.rows[0].release_date) {
+        const d = new Date(gameData.rows[0].release_date)
+
+        formattedDate = d.toISOString().split('T')[0]
+    }
 
     await db.getGameValues(gameTitle)
-    await db.updateGameValues({ title, genre, developer, release_date, description })
+    await db.updateGameValues({ gameName, genre, developer, release_date, description }, gameTitle)
+    await db.updateGameImage(gameImage)
 
     res.redirect('/')
 }
