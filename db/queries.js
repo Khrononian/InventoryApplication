@@ -53,11 +53,14 @@ exports.updateGameImage = async (array) => {
             UPDATE games
             SET game_img = $1::jsonb
             WHERE title = $2
-            `, [game, game.name])
+            `, [game, game.name]
+        )
+
+        
     }
 }
 
-exports.getGameValues = async (gameTitle, gameData) => {
+exports.getGameValues = async (gameTitle) => {
     const rows = await pool.query(`
         SELECT * FROM games
         WHERE title = $1
@@ -68,15 +71,17 @@ exports.getGameValues = async (gameTitle, gameData) => {
     
 }
 
-exports.updateGameValues = async (gameData) => {
-    const { title, genre, developer, release_date, description } = gameData;
-
+exports.updateGameValues = async (gameData, originalTitle) => {
+    const { gameName, genre, developer, release_date, description } = gameData;
+    console.log('INNER UPDATE', gameName, genre, developer, release_date, description, originalTitle)
     await pool.query(
-        `UPDATES games 
+        `UPDATE games 
         SET title = $1, genre = $2, developer = $3, release_date = $4, description = $5
-        WHERE title = $6`,
-        [title, genre, developer, release_date, description, gameTitle]
+        WHERE title = $6;
+        `, [gameName, genre, developer, release_date, description, originalTitle]
     );
+
+
 }
 
 exports.getGamesByCategory = async (categoryName) => {
