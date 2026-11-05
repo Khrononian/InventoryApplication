@@ -12,6 +12,9 @@
         </nav>
         <h1><%= gameTitle %></h1>
         <button><a href="/update/<%= gameTitle %>">Update</a></button>
+        <form action="/delete" method="post">
+            <button type='submit' name='delete' value='<%= gameTitle %>'>Delete</button>
+        </form>
         <div>
             <ul>
                 <% if (gameDetails) { %>
