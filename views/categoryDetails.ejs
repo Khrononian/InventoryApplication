@@ -13,7 +13,6 @@
         <h1>Games in <%= categoryName.charAt(0).toUpperCase() + categoryName.slice(1) %> category</h1>
 
         <div>
-            <% console.log('CATEGORIZED', categorizedGames) %>
             <% categorizedGames.forEach(game => { %>
                 <h2><%= game.title %></h2>
                 <img src="<%= game.game_img.url %>" alt="<%= game.title %>"
