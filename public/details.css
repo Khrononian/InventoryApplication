@@ -1,0 +1,64 @@
+header {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+}
+header button {
+    margin-left: 1em;
+    font-size: 1rem;
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 0.5em;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+}
+header button a {
+    text-decoration: none;
+    color: inherit;
+}
+header .update-btn {
+    background-color: #007bff;
+}
+header .update-btn:hover {
+    background-color: #0056b3;
+}
+header form button {
+    background-color: #dc3545;
+}
+header form button:hover {
+    background-color: #a71d2a;
+}
+
+h1 {
+    font-size: 2.5rem;
+    padding: 1em 0;
+}
+
+ul li {
+    list-style: none;
+    font-size: 1.5rem;
+}
+
+.game-details {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+    margin-bottom: 1em;
+}
+.game-details li {
+    list-style: none;
+}
+.game-description {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+}
+.game-description li {
+    list-style: none;
+}
+.game-description li::first-line {
+    font-weight: bold;
+    text-decoration: underline;
+    /* font-size: 1.75rem; */
+}
