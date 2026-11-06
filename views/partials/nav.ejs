@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/nav.css">
+    <link rel="stylesheet" href="https://use.hugeicons.com/font/icons.css" />
 </head>
 <body>
     <nav>
-        <div>
+        <div class="nav-links">
             <button><a href="/">Home</a></button>
             <% if (categories && categories.length > 0) { %>
             <% categories.forEach(category => { %>
@@ -14,6 +16,10 @@
             <% }) %>
             <% } %>
             <button><a href="/create">Create Game</a></button>
+            
+        </div>
+        <div class="menu-icon" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <i class="hgi hgi-stroke hgi-rounded hgi-menu-02" style="font-size: 2rem;"></i>
         </div>
     </nav>
 </body>
