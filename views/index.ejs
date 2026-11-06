@@ -4,28 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
+    <link rel="stylesheet" href="/main.css">
+    
 </head>
 <body>
     <main>
         <header>
             <h1><%= title %></h1>
         </header>
-        <%- include('partials/nav') %>
+        <nav>
+            <%- include('partials/nav') %>
+        </nav>
         <section>
             <ul>
                 <% dbGames.forEach(game => { %>
-                    <div>
+                    <div class="game-card">
                         <li><% for (let i = 0; i < dbGames.length; i++) { %>
                             <% if (dbGames[i].title == game.title) { %>
                                 <img src="<%= game.game_img ? game.game_img.url : '' %>" alt="<%= game.title %>">
                             <% } %>
                         
                         <% } %></li>
-                        <li><%= game.title %> - <%= game.genre %></li>
-                        <a href="/details/<%= game.title %>">Details</a>
-                        <form action='/delete' method="post">
-                            <button type='submit' name='delete' value='<%= game.title %>'>Delete</button>
-                        </form>
+                        <div class="game-info">
+                            <li><%= game.title %> - <%= game.genre %></li>
+                            <button><a href="/details/<%= game.title %>">Details</a></button>
+                            <form action='/delete' method="post">
+                                <button type='submit' name='delete' value='<%= game.title %>'>Delete</button>
+                            </form>
+                        </div>
                     </div>
                 <% }) %>
             </ul>

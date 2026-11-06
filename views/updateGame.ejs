@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games Inventory</title>
+    <link rel="stylesheet" href="/gameForm.css">
 </head>
 <body>
     <main>
@@ -19,10 +20,10 @@
         <% } %>
 
         <form action='/update/<%= gameTitle %>' method='POST'>
-            <label for='title'>Title:</label>
+            <label for='title'>Title <span>*</span></label>
             <input type='text' name='title' id='title' value="<%= gameData.rows[0].title %>" required>
 
-            <label for='genre'>Genre:</label>
+            <label for='genre'>Genre <span>*</span></label>
             <select name='genre' id='genre' required>
                 <% categories.forEach(category => { %>
                     <option value="<%= category.name %>" <%= category.name === gameData.rows[0].genre ? 'selected' : '' %>>
@@ -31,12 +32,12 @@
                 <% }) %>
             </select>
 
-            <label for='developer'>Developer:</label>
+            <label for='developer'>Developer <span>*</span></label>
             <input type='text' name='developer' id='developer' value="<%= gameData.rows[0].developer %>" required>
-            <label for='release_date'>Release Date:</label>
+            <label for='release_date'>Release Date <span>*</span></label>
             <input type='date' name='release_date' id='release_date' value="<%= formattedDate %>" required>
             
-            <label for='description'>Description:</label>
+            <label for='description'>Description <span>*</span></label>
             <textarea name='description' id='description'  required><%= gameData.rows[0].description %></textarea>
 
             <button type='submit'>Update Game</button>

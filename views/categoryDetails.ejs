@@ -4,24 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Games Inventory</title>
+    <link rel="stylesheet" href="/categoryDetails.css">
 </head>
 <body>
     <main>
         <nav>
             <%- include('partials/nav') %>
         </nav>
-        <h1>Games in <%= categoryName.charAt(0).toUpperCase() + categoryName.slice(1) %> category</h1>
-
-        <div>
-            <% categorizedGames.forEach(game => { %>
-                <h2><%= game.title %></h2>
-                <img src="<%= game.game_img.url %>" alt="<%= game.title %>"
-                <p>Developer <br> <%= game.developer %></p>
-                <p><%= game.release_date.toDateString() %></p>
-                <p>Description <br> <%= game.description %></p>
-            <% }) %>
-        </div>
-        
+        <header>
+            <h1>Games in <%= categoryName.charAt(0).toUpperCase() + categoryName.slice(1) %> category</h1>
+        </header>
+        <section>
+            <div>
+                <% categorizedGames.forEach(game => { %>
+                    <div class="categorized-games">
+                        <h2><%= game.title %></h2>
+                        <img src="<%= game.game_img.url %>" alt="<%= game.title %>"
+                        <div class="categorized-details">
+                            <p>Developer <br> <%= game.developer %></p>
+                            <p><%= game.release_date.toDateString() %></p>
+                            <p>Description <br> <%= game.description %></p>
+                            <button><a href="/details/<%= game.title %>">Details</a></button>
+                        </div>
+                        
+                    </div>
+                <% }) %>
+            </div>
+        </section>
     </main>
 </body>
 </html>
