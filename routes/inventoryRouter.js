@@ -9,7 +9,8 @@ inventoryRouter.get('/create', inventoryController.getCreateGameForm);
 inventoryRouter.post('/create', inventoryController.postCreateGameForm);
 inventoryRouter.get('/update/:gameTitle', inventoryController.getUpdateGameForm);
 inventoryRouter.post('/update/:gameTitle', inventoryController.postUpdateGameForm);
-inventoryRouter.post('/delete', inventoryController.postDeletedGame)
+inventoryRouter.get('/delete/:gameTitle', inventoryController.getDeleteGameForm);
+inventoryRouter.post('/delete/', inventoryController.postDeletedGame)
 
 
 module.exports = { inventoryRouter };
