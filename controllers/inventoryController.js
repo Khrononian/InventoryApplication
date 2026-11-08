@@ -15,7 +15,6 @@ const searchFetchedGame = async (title) => {
     const gameImage = []
 
     if (!searchUrlJson.items || searchUrlJson.total === 0) {
-        // console.log('DID THIS COMMAND', storeSearchUrl, searchUrlJson)
         return res.render('createGame', {
             error: `${title} was not found on Steam. Check your spelling!`
         })
@@ -28,6 +27,14 @@ const searchFetchedGame = async (title) => {
 
 
     return { gameName, gameImage }
+}
+
+const isOriginalGame = (gameTitle) => {
+    const originalGames = ['Speed', 'Terraria', 'Subnautica', 'Batman', 'The Long Dark', 'Hollow Knight',
+        'Left 4 Dead 2', 'Wolfenstein', 'Cat Simulator', 'Counter-Strike 2', 'F.E.A.R.'
+    ];
+
+    return originalGames.some(seed => new RegExp(`^${seed}`, 'i').test(gameTitle));
 }
 
 exports.getAllGames = async (req, res) => {
@@ -46,15 +53,13 @@ exports.getAllGames = async (req, res) => {
                 url: specificGameJson[filteredGames[i].appid].data.header_image
             })
             await db.updateGameImage(gameObjectData)
-            
-            // console.log('OBJ', gameObjectData)
             await sleep(300);
         } catch (error) {
             console.error(`Error fetching specific game data for appid ${filteredGames[i].appid}, which is ${filteredGames[i]}:`, error.message);
         }
     }
 
-    res.render('index', { title: 'Games Inventory', dbGames });
+    res.render('index', { title: 'Games Inventory', dbGames, pinError: null, adminPassword: undefined, isOriginalGame });
 }
 
 exports.getGameDetails = async (req, res) => {
@@ -65,8 +70,7 @@ exports.getGameDetails = async (req, res) => {
     const specificGame = await fetch(`https://store.steampowered.com/api/appdetails?appids=${filteredGame.appid}`);
     const specificGameJson = await specificGame.json();
 
-
-    res.render('gameDetails', { gameTitle, gameDetails, imageUrl: specificGameJson[filteredGame.appid].data.header_image });
+    res.render('gameDetails', { gameTitle, gameDetails, imageUrl: specificGameJson[filteredGame.appid].data.header_image, isOriginalGame: isOriginalGame(gameTitle) });
 }
 
 exports.getAllGamesByCategory = async (req, res) => {
@@ -76,17 +80,15 @@ exports.getAllGamesByCategory = async (req, res) => {
     res.render('categoryDetails', { title: 'Categorized Games', categoryName, categorizedGames })
 }
 
-exports.getCreateGameForm = (req, res) => {
+exports.getCreateGameForm = async (req, res) => {
     res.render('createGame', { title: 'Create Game based on Steam!', formData: undefined });
 }
 
 exports.postCreateGameForm = async (req, res) => {
     const { title, genre, developer, release_date, description } = req.body;
     const { gameName, gameImage } = await searchFetchedGame(title)
-
-    console.log('SEARCHING FOR GAME', gameName, await db.findGameByTitle(gameName), req.body, req.body.title)
+    
     if (await db.findGameByTitle(gameName)) {
-        console.log('FAILED', gameName)
         return res.render('createGame', {
             error: `${gameName} already exists in the database, cannot create a duplicate entry.`,
             formData: req.body
@@ -103,15 +105,39 @@ exports.postCreateGameForm = async (req, res) => {
     await db.insertGame({ gameName, genre, developer, release_date, description })
     await db.updateGameImage(gameImage)
 
-
     res.redirect('/');
 }
 
 exports.getUpdateGameForm = async (req, res) => {
     const gameTitle = req.params.gameTitle
+    const adminPassword = req.query.adminPass
     const gameData = await db.getGameValues(gameTitle)
     const categories = await db.getAllCategories()
+    const gameDetails = await db.findGameByTitle(gameTitle)
     let formattedDate = ''
+
+    if (isOriginalGame(gameTitle)) {
+        if (adminPassword == undefined) {
+            return res.render(`gameDetails`, {
+                approvalError: `This requires admin approval!`,
+                gameTitle,
+                gameData,
+                gameDetails,
+                imageUrl: gameDetails.game_img.url,
+                
+            })
+        }
+        if (adminPassword !== 'admin532/02s') {
+            return res.render(`gameDetails`, {
+                approvalError: `This requires admin approval!`,
+                pinError: `Incorrect Admin Password!`,
+                gameTitle,
+                gameData,
+                gameDetails,
+                imageUrl: gameDetails.game_img.url,
+            })
+        }
+    }
 
     if (gameData.rows[0].release_date) {
         const d = new Date(gameData.rows[0].release_date)
@@ -119,7 +145,7 @@ exports.getUpdateGameForm = async (req, res) => {
         formattedDate = d.toISOString().split('T')[0]
     }
 
-    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle, gameData, categories, formattedDate,  })
+    res.render('updateGame', { title: 'Update Game based on Steam!', gameTitle, gameData, categories, formattedDate })
 }
 
 exports.postUpdateGameForm = async (req, res) => {
@@ -128,13 +154,8 @@ exports.postUpdateGameForm = async (req, res) => {
     const gameData = await db.getGameValues(gameTitle)
     const { gameName, gameImage } = await searchFetchedGame(title)
     const categories = await db.getAllCategories();
-    let formattedDate = ''
-
-    console.log('UPDATING GAME', gameData, gameName, await db.updateGameImage(gameImage))
 
     if (title == gameTitle) {
-        // const gameData = await db.getGameValues(gameTitle)
-        console.log('FAILED', gameTitle, gameData)
         return res.render('updateGame', {
             error: `${gameTitle} already exists, change the name!`,
             title: 'Update Game based on Steam!',
@@ -157,6 +178,31 @@ exports.postUpdateGameForm = async (req, res) => {
     await db.updateGameImage(gameImage)
 
     res.redirect('/')
+}
+
+exports.getDeleteGameForm = async (req, res) => {
+    const gameTitle = req.params.gameTitle;
+    const adminPassword = req.query.adminPass
+    
+    if (isOriginalGame(gameTitle)) {
+        if (adminPassword == '') {
+            return res.render('delete', {
+                approvalError: `This requires admin approval!`,
+                gameTitle,
+                adminPassword: ''
+            })
+        }
+        if (adminPassword !== 'admin532/02s') {
+            return res.render('delete', {
+                approvalError: `This requires admin approval!`,
+                pinError: `Incorrect Admin Password!`,
+                gameTitle,
+                adminPassword
+            })
+        }
+    }
+
+    res.render('delete', { gameTitle })
 }
 
 exports.postDeletedGame = async (req, res) => {
