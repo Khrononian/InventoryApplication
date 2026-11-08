@@ -13,10 +13,12 @@
         </nav>
 
         <h1>Create Game based on Steam!</h1>
-
+        
         <% if (locals.error) { %>
-            <div>
-                <p style="color: red;"><%= error %></p>
+            <div class="error">
+                <h2>Failed to create game</h2>
+                <p><%= error %></p>
+                <p>Try again!</p>
             </div>
         <% } %>
 

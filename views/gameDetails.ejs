@@ -14,9 +14,15 @@
         <header>
             <h1><%= gameTitle %></h1>
             <button class="update-btn"><a href="/update/<%= gameTitle %>">Update</a></button>
-            <form action="/delete" method="post">
-                <button type='submit' name='delete' value='<%= gameTitle %>'>Delete</button>
-            </form>
+            <% if (isOriginalGame) { %>
+                <form>
+                    <button type='submit' name='delete' value='<%= gameTitle %>'><a href="/delete/<%= gameTitle %>">Delete</a></button>
+                </form>
+            <% } else { %>
+                <form action="/delete" method="post">
+                    <button type='submit' name='delete' value='<%= gameTitle %>'>Delete</button>
+                </form>
+            <% } %>
         </header>
         <div>
             <ul>
@@ -30,12 +36,24 @@
                     <div class="game-description">
                         <li>Description<br> <%= gameDetails.description %></li>
                     </div>
-                <% } else { %>
-                    <p>Game not found.</p>
                 <% } %>
             </ul>
         </div>
+        <% if (locals.approvalError) { %>
+            <div class="admin">
+                <h3>Admin Authorization</h3>
+                <form class="admin-form">
+                    <p>Enter the admin password to update <%= gameTitle %></p>
+                    <label for="adminPass">Admin Password <span>*</span></label>
+                    <input placeholder="Enter admin password" type="password" id="adminPass" name="adminPass">
+                    <button type="submit">Submit</button>
+                    <% if (locals.pinError) { %>
+                        <p class="error"><%= locals.pinError %></p>
+                    <% } %>
+                </form>
+            </div>
+        <% } %>
+        
     </main>
-    
 </body>
 </html>

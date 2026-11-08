@@ -28,9 +28,15 @@
                         <div class="game-info">
                             <li><%= game.title %> - <%= game.genre %></li>
                             <button><a href="/details/<%= game.title %>">Details</a></button>
-                            <form action='/delete' method="post">
-                                <button type='submit' name='delete' value='<%= game.title %>'>Delete</button>
-                            </form>
+                            <% if (isOriginalGame(game.title)) { %>
+                                <form>
+                                    <button type='submit' name='delete' value='<%= game.title %>'><a href="/delete/<%= game.title %>">Delete</a></button>
+                                </form>
+                            <% } else { %>
+                                <form action='/delete' method="post">
+                                    <button type='submit' name='delete' value='<%= game.title %>'>Delete</button>
+                                </form>
+                            <% } %>
                         </div>
                     </div>
                 <% }) %>
