@@ -1,0 +1,51 @@
+.admin {
+    padding: 1.5em;
+    background-color: #f4f6f9;
+    margin-top: 2.5em;
+    border-radius: 0.5em;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10em;
+}
+.admin h3 {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 1.5em;
+    margin-bottom: .2em;
+}
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+}
+.admin-form p {
+    line-height: 1.5;
+}
+.admin-form label {
+    font-weight: bold;
+}
+.admin-form label span {
+    color: red;
+}
+.admin-form input {
+    padding: .8em;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5em;
+}
+.admin-form button {
+    padding: .8em;
+    font-size: 1rem;
+    border: none;
+    border-radius: 0.5em;
+    background-color: #007bff !important;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+}
+.admin-form button:hover {
+    background-color: #0056b3;
+}
+.admin-form .error {
+    color: red;
+}
