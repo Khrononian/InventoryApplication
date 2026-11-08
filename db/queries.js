@@ -25,7 +25,6 @@ exports.insertGame = async (gameData) => {
             [gameName, genre, developer, release_date, description]
         );
 
-        console.log('SUCCESS', gameName, 'GENRE', genre, developer, release_date, description)
     } catch (error) {
         console.error('FAILED', error.message)
     }
@@ -55,8 +54,6 @@ exports.updateGameImage = async (array) => {
             WHERE title = $2
             `, [game, game.name]
         )
-
-        
     }
 }
 
@@ -73,7 +70,7 @@ exports.getGameValues = async (gameTitle) => {
 
 exports.updateGameValues = async (gameData, originalTitle) => {
     const { gameName, genre, developer, release_date, description } = gameData;
-    console.log('INNER UPDATE', gameName, genre, developer, release_date, description, originalTitle)
+
     await pool.query(
         `UPDATE games 
         SET title = $1, genre = $2, developer = $3, release_date = $4, description = $5
