@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/delete.css">
+</head>
+<body>
+    <main>
+        <nav>
+            <%- include('partials/nav') %>
+        </nav>
+        <section>
+            <div class="admin">
+                <h3>Admin Authorization</h3>
+                <form class="admin-form">
+                    <p>Enter the admin password to delete <%= gameTitle %></p>
+                    <label for="adminPass">Admin Password <span>*</span></label>
+                    <input placeholder="Enter admin password" type="password" id="adminPass" name="adminPass">
+                    <button type="submit">Submit</button>
+                    <% if (locals.pinError && typeof locals.adminPassword === 'string') { %>
+                        <p class="error"><%= locals.pinError %></p>
+                    <% } %>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
