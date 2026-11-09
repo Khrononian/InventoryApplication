@@ -1,4 +1,9 @@
 {
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "populate": "node db/populatedb.js"
+  },
   "dependencies": {
     "dotenv": "^18.0.7",
     "ejs": "^7.0.1",
