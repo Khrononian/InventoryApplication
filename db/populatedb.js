@@ -1,3 +1,4 @@
+require("dotenv").config();
 const { Client } = require("pg");
 
 const SQL = `
@@ -45,7 +46,8 @@ INSERT INTO categories (name)
 
 const main = async () => {
     const client = new Client({
-        connectionString: 'postgresql://postgres:005522@localhost:5432/inventory_application',
+        // connectionString: 'postgresql://postgres:005522@localhost:5432/inventory_application',
+        connectionString: process.env.DATABASE_URL,
     })
 
     await client.connect();
