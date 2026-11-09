@@ -124,7 +124,7 @@ exports.getUpdateGameForm = async (req, res) => {
                 gameData,
                 gameDetails,
                 imageUrl: gameDetails.game_img.url,
-                
+                isOriginalGame: isOriginalGame(gameTitle)
             })
         }
         if (adminPassword !== 'admin532/02s') {
@@ -135,6 +135,7 @@ exports.getUpdateGameForm = async (req, res) => {
                 gameData,
                 gameDetails,
                 imageUrl: gameDetails.game_img.url,
+                isOriginalGame: isOriginalGame(gameTitle)
             })
         }
     }
