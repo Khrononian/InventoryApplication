@@ -43,6 +43,8 @@ exports.getAllGames = async (req, res) => {
     const filteredGames = getGames.gamesJson.filter(game => dbGames.some(dbGame => dbGame.title === game.name));
     const gameObjectData = []
 
+    await db.deleteDuplicates();
+
     for (let i = 0; i < filteredGames.length; i++) {
         try {
             const specificGame = await fetch(`https://store.steampowered.com/api/appdetails?appids=${filteredGames[i].appid}`);
