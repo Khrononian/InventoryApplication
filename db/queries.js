@@ -95,3 +95,14 @@ exports.getGamesByCategory = async (categoryName) => {
 exports.deleteGame = async (gameName) => {
     await pool.query('DELETE FROM games WHERE title = $1', [gameName]);
 }
+
+exports.deleteDuplicates = async () => {
+    await pool.query(`
+        DELETE FROM games
+        WHERE ctid NOT IN (
+            SELECT MIN(ctid)
+            FROM games
+            GROUP BY title
+        );
+    `);
+}
