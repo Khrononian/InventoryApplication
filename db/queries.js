@@ -108,8 +108,14 @@ exports.deleteDuplicates = async () => {
 }
 
 exports.initializeData = async () => {
-    await pool.query(`
+    try {
+        await pool.query(`
             ALTER TABLE games 
             ADD CONSTRAINT unique_game_title UNIQUE (title);
         `)
+    } catch (error) {
+        if (error.code === '42710') {
+            console.log('Unique constraint already exists')
+        } else throw error
+    }
 }
