@@ -106,3 +106,10 @@ exports.deleteDuplicates = async () => {
         );
     `);
 }
+
+exports.initializeData = async () => {
+    await pool.query(`
+            ALTER TABLE games 
+            ADD CONSTRAINT unique_game_title UNIQUE (title);
+        `)
+}
