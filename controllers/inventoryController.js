@@ -10,7 +10,7 @@ const initializeData = async () => {
     }
 }
 
-initializeData();
+await initializeData();
 const searchFetchedGame = async (title) => {
     const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
     const searchUrlJson = await storeSearchUrl.json()
