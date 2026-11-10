@@ -2,6 +2,15 @@ const db = require("../db/queries");
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
+const initializeData = async () => {
+    try {
+        await db.initializeData();
+    } catch (error) {
+        console.error('FAILED', error.message)
+    }
+}
+
+initializeData();
 const searchFetchedGame = async (title) => {
     const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
     const searchUrlJson = await storeSearchUrl.json()
@@ -43,7 +52,7 @@ exports.getAllGames = async (req, res) => {
     const filteredGames = getGames.gamesJson.filter(game => dbGames.some(dbGame => dbGame.title === game.name));
     const gameObjectData = []
     
-    await db.initializeData();
+    
     await db.deleteDuplicates();
 
     for (let i = 0; i < filteredGames.length; i++) {
