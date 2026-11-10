@@ -42,7 +42,8 @@ exports.getAllGames = async (req, res) => {
     const dbGames = getGames.rows.filter(game => game.title?.match(/[A-Z][a-z].*$/i));
     const filteredGames = getGames.gamesJson.filter(game => dbGames.some(dbGame => dbGame.title === game.name));
     const gameObjectData = []
-
+    
+    await db.initializeData();
     await db.deleteDuplicates();
 
     for (let i = 0; i < filteredGames.length; i++) {
