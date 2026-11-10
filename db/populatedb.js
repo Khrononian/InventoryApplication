@@ -2,6 +2,9 @@ require("dotenv").config();
 const { Client } = require("pg");
 
 const SQL = `
+DROP TABLE IF EXISTS games CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+
 CREATE TABLE IF NOT EXISTS games (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     title VARCHAR(255) UNIQUE,
