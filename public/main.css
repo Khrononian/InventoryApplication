@@ -83,13 +83,17 @@ section ul li {
     background-color: #a71d2a;
 }
 
-@media screen and (min-width: 350px) and (max-width: 1095px) {
+@media screen and (min-width: 300px) and (max-width: 1095px) {
     section ul {
         grid-template-columns: repeat(auto-fill, minmax(200px, 507px));
         justify-content: center;
     }
 
+    section ul li {
+        padding: 0;
+    }
+
     section img {
-        width: 360px;
+        width: clamp(1vw, 70vw, 460px)
     }
 }
