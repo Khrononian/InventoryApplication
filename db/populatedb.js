@@ -4,7 +4,7 @@ const { Client } = require("pg");
 const SQL = `
 CREATE TABLE IF NOT EXISTS games (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    title VARCHAR(255),
+    title VARCHAR(255) UNIQUE,
     genre VARCHAR(255),
     developer VARCHAR(255),
     release_date DATE,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS games (
 
 CREATE TABLE IF NOT EXISTS categories (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
-    name VARCHAR(255)
+    name VARCHAR(255) UNIQUE
 );
 
 INSERT INTO games (title, genre, developer, release_date, description) 
