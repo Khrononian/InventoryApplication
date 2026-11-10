@@ -2,15 +2,15 @@ const db = require("../db/queries");
 
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-const initializeData = async () => {
-    try {
-        await db.initializeData();
-    } catch (error) {
-        console.error('FAILED', error.message)
-    }
-}
+// const initializeData = async () => {
+//     try {
+//         await db.initializeData();
+//     } catch (error) {
+//         console.error('FAILED', error.message)
+//     }
+// }
 
-await initializeData();
+// await initializeData();
 const searchFetchedGame = async (title) => {
     const storeSearchUrl = await fetch(`https://store.steampowered.com/api/storesearch?term=${encodeURIComponent(title)}&l=english&cc=US`)
     const searchUrlJson = await storeSearchUrl.json()
